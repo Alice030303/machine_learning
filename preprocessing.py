@@ -207,8 +207,11 @@ def visualize_augmentation(data_dir, target_size=(224, 224), num_samples=4):
     # Récupérer les classes valides (exclure 'extra' et autres dossiers ignorés)
     valid_classes = get_valid_classes(data_dir)
     
-    # Créer un générateur avec augmentation
-    datagen = ImageDataGenerator(
+    # Générateur SANS augmentation pour obtenir les images originales
+    original_datagen = ImageDataGenerator(rescale=1./255)
+    
+    # Générateur AVEC augmentation pour appliquer les transformations
+    augment_datagen = ImageDataGenerator(
         rescale=1./255,
         rotation_range=359,
         zoom_range=0.2,
@@ -218,13 +221,15 @@ def visualize_augmentation(data_dir, target_size=(224, 224), num_samples=4):
         fill_mode='nearest'
     )
     
-    generator = datagen.flow_from_directory(
+    # Générateur pour les images originales (sans augmentation)
+    original_generator = original_datagen.flow_from_directory(
         data_dir,
         target_size=target_size,
         batch_size=1,
         class_mode='categorical',
-        classes=valid_classes,  # Spécifier explicitement les classes à inclure
-        shuffle=True
+        classes=valid_classes,
+        shuffle=True,
+        seed=42  # Seed fixe pour reproductibilité
     )
     
     # Afficher quelques exemples
@@ -232,15 +237,21 @@ def visualize_augmentation(data_dir, target_size=(224, 224), num_samples=4):
     fig.suptitle('Exemples d\'augmentation de données', fontsize=16)
     
     for i in range(num_samples):
-        # Image originale (première ligne)
-        img, label = next(generator)  # Utiliser next() au lieu de .next()
-        axes[0, i].imshow(img[0])
-        axes[0, i].axis('off')
-        axes[0, i].set_title('Original')
+        # Charger l'image originale (sans augmentation)
+        img_original, label_original = next(original_generator)
         
-        # Image augmentée (deuxième ligne)
-        img_aug, _ = next(generator)  # Utiliser next() au lieu de .next()
-        axes[1, i].imshow(img_aug[0])
+        # Appliquer l'augmentation directement à cette image
+        # random_transform() applique les transformations aléatoirement
+        img_augmented = augment_datagen.random_transform(img_original[0])
+        
+        # Afficher l'image originale (première ligne)
+        axes[0, i].imshow(img_original[0])
+        axes[0, i].axis('off')
+        class_name = list(original_generator.class_indices.keys())[label_original[0].argmax()]
+        axes[0, i].set_title(f'Original ({class_name})')
+        
+        # Afficher l'image augmentée (deuxième ligne)
+        axes[1, i].imshow(img_augmented)
         axes[1, i].axis('off')
         axes[1, i].set_title('Augmentée')
     
