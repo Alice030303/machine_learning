@@ -233,13 +233,13 @@ def visualize_augmentation(data_dir, target_size=(224, 224), num_samples=4):
     
     for i in range(num_samples):
         # Image originale (première ligne)
-        img, label = generator.next()
+        img, label = next(generator)  # Utiliser next() au lieu de .next()
         axes[0, i].imshow(img[0])
         axes[0, i].axis('off')
         axes[0, i].set_title('Original')
         
         # Image augmentée (deuxième ligne)
-        img_aug, _ = generator.next()
+        img_aug, _ = next(generator)  # Utiliser next() au lieu de .next()
         axes[1, i].imshow(img_aug[0])
         axes[1, i].axis('off')
         axes[1, i].set_title('Augmentée')

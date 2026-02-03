@@ -56,13 +56,14 @@ TP machine learning - Reconnaissance d'animaux avec Python et réseaux de neuron
 ```
 machine_learning/
 ├── data/
-│   ├── tigres/        # Images de tigres
-│   ├── elephants/     # Images d'éléphants
-│   ├── giraffes/      # Images de girafes
+│   ├── tigre/         # Images de tigres
+│   ├── elephant/      # Images d'éléphants
+│   ├── giraffe/       # Images de girafes
 │   └── extra/         # Images supplémentaires (ignoré lors du traitement)
-├── preprocessing.py    # Script de prétraitement des images ✅
-├── requirements.txt    # Dépendances Python ✅
-├── README.md           # Ce fichier
+├── preprocessing.py   # Script de prétraitement des images ✅
+├── visualize.py       # Script de visualisation de l'augmentation ✅
+├── requirements.txt   # Dépendances Python ✅
+├── README.md          # Ce fichier
 └── TP-Reconnaissance-danimaux-avec-Python-et-reseaux-de-neurones.pdf
 ```
 
@@ -102,6 +103,7 @@ Le script `preprocessing.py` contient :
 3. **Fonction `visualize_augmentation()`**
    - Visualisation des effets de l'augmentation
    - **Ignoration automatique du dossier `extra/`**
+   - Génère une image `augmentation_examples.png` avec des exemples
 
 4. **Fonction `preprocess_dataset()`**
    - Prétraitement en lot de toutes les images (optionnel, pour sauvegarde manuelle si nécessaire)
@@ -127,9 +129,31 @@ print(f"Images d'entraînement: {train_gen.samples}")
 print(f"Images de validation: {val_gen.samples}")
 ```
 
+### Visualisation de l'augmentation
+
+Pour visualiser les effets de l'augmentation des données, utilisez le script `visualize.py` :
+
+```bash
+python visualize.py
+```
+
+Ou directement en Python :
+
+```python
+from preprocessing import visualize_augmentation
+
+visualize_augmentation(
+    data_dir="data",
+    target_size=(224, 224),
+    num_samples=4  # Nombre d'exemples à afficher
+)
+```
+
+Cela affichera une fenêtre avec des exemples d'images originales et augmentées, et sauvegardera `augmentation_examples.png`.
+
 ### Paramètres d'augmentation configurés
 
-- **Rotation** : ±20 degrés
+- **Rotation** : ±359 degrés
 - **Zoom** : ±20%
 - **Retournement horizontal** : Activé
 - **Translation** : ±10% horizontal et vertical
@@ -153,3 +177,5 @@ print(f"Images de validation: {val_gen.samples}")
 - ✅ Documentation initiale créée
 - ✅ Dossier `extra/` ignoré automatiquement lors du traitement
 - ✅ Prétraitement à la volée (pas de sauvegarde, traitement en mémoire pendant l'entraînement)
+- ✅ Script `visualize.py` créé pour visualiser l'augmentation des données
+- ✅ Correction de la fonction `visualize_augmentation()` (compatibilité Python 3)
