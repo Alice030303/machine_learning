@@ -14,6 +14,7 @@ from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau
 import matplotlib.pyplot as plt
 import numpy as np
+from keras.metrics import TopKCategoricalAccuracy
 
 
 def build_cnn_model(input_shape=(224, 224, 3), num_classes=3):
@@ -84,8 +85,8 @@ def compile_model(model, learning_rate=0.001):
     """
     model.compile(
         optimizer=Adam(learning_rate=learning_rate),
-        loss='categorical_crossentropy',  # Pour classification multi-classes
-        metrics=['accuracy', 'top_k_categorical_accuracy']
+        loss='categorical_crossentropy', 
+        metrics=['accuracy', TopKCategoricalAccuracy(k=2, name='top_2_acc')]
     )
     
     return model
